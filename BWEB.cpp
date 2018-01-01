@@ -152,6 +152,124 @@ namespace BWEB
 		return tileBest;
 	}
 
+	TilePosition Map::getPoweredBuildPosition(UnitType building, const set<TilePosition> *usedTiles, TilePosition searchCenter)
+	{
+		double distBest = DBL_MAX;
+		TilePosition tileBest = TilePositions::Invalid;
+		switch (building.tileWidth())
+		{
+		case 4:
+			for (auto &position : largePosition)
+			{
+				double distToPos = position.getDistance(searchCenter);
+				if (distToPos < distBest && usedTiles->find(position) == usedTiles->end() &&
+					BWAPI::Broodwar->hasPower(position, building))
+					distBest = distToPos, tileBest = position;
+			}
+			break;
+		case 3:
+			for (auto &position : mediumPosition)
+			{
+				double distToPos = position.getDistance(searchCenter);
+				if (distToPos < distBest && usedTiles->find(position) == usedTiles->end() &&
+					BWAPI::Broodwar->hasPower(position, building))
+					distBest = distToPos, tileBest = position;
+			}
+			break;
+		case 2:
+			for (auto &position : smallPosition)
+			{
+				double distToPos = position.getDistance(searchCenter);
+				if (distToPos < distBest && usedTiles->find(position) == usedTiles->end() &&
+					BWAPI::Broodwar->hasPower(position, building))
+					distBest = distToPos, tileBest = position;
+			}
+			break;
+		}
+		return tileBest;
+	}
+
+	TilePosition Map::getPoweredDefBuildPosition(UnitType building, const set<TilePosition> *usedTiles, TilePosition searchCenter)
+	{
+		double distBest = DBL_MAX;
+		TilePosition tileBest = TilePositions::Invalid;
+		switch (building.tileWidth())
+		{
+		case 4:
+			break;
+		case 3:
+			for (auto &position : mDefPosition)
+			{
+				double distToPos = position.getDistance(searchCenter);
+				if (distToPos < distBest && usedTiles->find(position) == usedTiles->end() &&
+					BWAPI::Broodwar->hasPower(position, building))
+					distBest = distToPos, tileBest = position;
+			}
+			break;
+		case 2:
+			for (auto &position : sDefPosition)
+			{
+				double distToPos = position.getDistance(searchCenter);
+				if (distToPos < distBest && usedTiles->find(position) == usedTiles->end() &&
+					BWAPI::Broodwar->hasPower(position, building))
+					distBest = distToPos, tileBest = position;
+			}
+			break;
+		}
+		return tileBest;
+	}
+
+	TilePosition Map::getPoweredAnyBuildPosition(UnitType building, const set<TilePosition> *usedTiles, TilePosition searchCenter)
+	{
+		double distBest = DBL_MAX;
+		TilePosition tileBest = TilePositions::Invalid;
+		switch (building.tileWidth())
+		{
+		case 4:
+			for (auto &position : largePosition)
+			{
+				double distToPos = position.getDistance(searchCenter);
+				if (distToPos < distBest && usedTiles->find(position) == usedTiles->end() &&
+					BWAPI::Broodwar->hasPower(position, building))
+					distBest = distToPos, tileBest = position;
+			}
+			break;
+		case 3:
+			for (auto &position : mediumPosition)
+			{
+				double distToPos = position.getDistance(searchCenter);
+				if (distToPos < distBest && usedTiles->find(position) == usedTiles->end() &&
+					BWAPI::Broodwar->hasPower(position, building))
+					distBest = distToPos, tileBest = position;
+			}
+			for (auto &position : mDefPosition)
+			{
+				double distToPos = position.getDistance(searchCenter);
+				if (distToPos < distBest && usedTiles->find(position) == usedTiles->end() &&
+					BWAPI::Broodwar->hasPower(position, building))
+					distBest = distToPos, tileBest = position;
+			}
+			break;
+		case 2:
+			for (auto &position : smallPosition)
+			{
+				double distToPos = position.getDistance(searchCenter);
+				if (distToPos < distBest && usedTiles->find(position) == usedTiles->end() &&
+					BWAPI::Broodwar->hasPower(position, building))
+					distBest = distToPos, tileBest = position;
+			}
+			for (auto &position : sDefPosition)
+			{
+				double distToPos = position.getDistance(searchCenter);
+				if (distToPos < distBest && usedTiles->find(position) == usedTiles->end() &&
+					BWAPI::Broodwar->hasPower(position, building))
+					distBest = distToPos, tileBest = position;
+			}
+			break;
+		}
+		return tileBest;
+	}
+
 	void Map::findNatural()
 	{
 		// Find natural area

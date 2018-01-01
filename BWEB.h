@@ -1,6 +1,6 @@
 #pragma once
 #include <BWAPI.h>
-#include "..\BWEM\bwem.h"
+#include "BWEM 1.3.1\src\bwem.h"
 #include "Block.h"
 #include "Wall.h"
 #include "BWEBUtil.h"
@@ -54,6 +54,15 @@ namespace BWEB
 
 		// Returns the closest build position possible, with optional parameters of what tiles are used already and where you want to build closest to
 		TilePosition getAnyBuildPosition(UnitType, const set<TilePosition>* = nullptr, TilePosition = Broodwar->self()->getStartLocation());
+
+		//Returns the closest build position possible for a building designed for anything except defenses, with Pylon power, with optional parameters of what tiles are used already and where you want to build closest to
+		TilePosition getPoweredBuildPosition(UnitType, const set<TilePosition>* = nullptr, TilePosition = Broodwar->self()->getStartLocation());
+
+		// Returns the closest build position possible for a building designed for defenses, with Pylon power, with optional parameters of what tiles are used already and where you want to build closest to
+		TilePosition getPoweredDefBuildPosition(UnitType, const set<TilePosition>* = nullptr, TilePosition = Broodwar->self()->getStartLocation());
+
+		// Returns the closest build position possible, with optional parameters of what tiles are used already and where you want to build closest to
+		TilePosition getPoweredAnyBuildPosition(UnitType, const set<TilePosition>* = nullptr, TilePosition = Broodwar->self()->getStartLocation());
 		
 		// Returns all the walls -- CURRENTLY ONLY NATURAL WALL, use at own risk if not using the BWEB natural area
 		map<Area const *, Wall> getWalls() { return areaWalls; }
