@@ -8,31 +8,33 @@ namespace BWEB
 
 	class Wall
 	{
-		TilePosition wallSmall, wallMedium, wallLarge, wallDoor;
-		set<TilePosition> defenses;
+		TilePosition wallDoor;
+		set<TilePosition> defenses, small, medium, large;
+		const BWEM::Area * area;
+		const BWEM::ChokePoint * choke;
+		
 	public:
-		Wall() { };
-		Wall(TilePosition, TilePosition, TilePosition, set<TilePosition>);
-
-		// Returns the small building associated with this Wall
-		const TilePosition getSmallWall() { return wallSmall; }
-
-		// Returns the medium building associated with this Wall
-		const TilePosition getMediumWall() { return wallMedium; }
-
-		// Returns the large building associated with this Wall
-		const TilePosition getLargeWall() { return wallLarge; }
-
-		// Returns the defense locations associated with this Wall
-		const set<TilePosition> getDefenses() { return defenses; }
-
-		// Returns the TilePosition belonging to the position where a melee unit should stand to fill the gap of the wall
-		const TilePosition getDoor() { return wallDoor; }
-
-		void setSmallWall(TilePosition here) { wallSmall = here; }
-		void setMediumWall(TilePosition here) { wallMedium = here; }
-		void setLargeWall(TilePosition here) { wallLarge = here; }
+		Wall(const BWEM::Area *, const BWEM::ChokePoint *);
 		void insertDefense(TilePosition here) { defenses.insert(here); }
 		void setWallDoor(TilePosition here) { wallDoor = here; }
+		void insertSegment(TilePosition, UnitType);
+
+		const BWEM::ChokePoint * getChokePoint() const { return choke; }
+		const BWEM::Area * getArea() const { return area; }
+		
+		// Returns the defense locations associated with this Wall
+		set<TilePosition> getDefenses() const { return defenses; }
+
+		// Returns the TilePosition belonging to the position where a melee unit should stand to fill the gap of the wall
+		TilePosition getDoor() const { return wallDoor; }
+
+		// Returns the TilePosition belonging to large UnitType buildings
+		set<TilePosition> largeTiles() const { return large; }
+
+		// Returns the TilePosition belonging to medium UnitType buildings
+		set<TilePosition> mediumTiles() const { return medium; }
+
+		// Returns the TilePosition belonging to small UnitType buildings
+		set<TilePosition> smallTiles() const { return small; }
 	};	
 }

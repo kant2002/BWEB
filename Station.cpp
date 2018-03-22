@@ -1,8 +1,9 @@
 #include "Station.h"
+#include <chrono>
 
 namespace BWEB
 {
-	Station::Station(TilePosition newResourceCenter, set<TilePosition> newDefenses, const BWEM::Base* newBase)
+	Station::Station(Position newResourceCenter, set<TilePosition> newDefenses, const BWEM::Base* newBase)
 	{
 		resourceCenter = newResourceCenter;
 		defenses = newDefenses;
@@ -11,26 +12,34 @@ namespace BWEB
 
 	void Map::findStations()
 	{
-		for (auto &area : BWEM::Map::Instance().Areas())
+		std::chrono::high_resolution_clock clock;
+		chrono::steady_clock::time_point start;
+		start = chrono::high_resolution_clock::now();
+
+		for (auto& area : BWEM::Map::Instance().Areas())
 		{
-			for (auto &base : area.Bases())
+			for (auto& base : area.Bases())
 			{
 				bool h = false, v = false;
-				if (base.Center().x > BWEM::Map::Instance().Center().y) h = true;
-				TilePosition genCenter; Position gasCenter;
-				int cnt = 0;
-				for (auto &mineral : base.Minerals())
-					genCenter += mineral->TopLeft(), cnt++;
 
-				for (auto &gas : base.Geysers())
+				Position genCenter, sCenter;
+				int cnt = 0;
+				for (auto& mineral : base.Minerals())
+					genCenter += mineral->Pos(), cnt++;				
+
+				if (cnt > 0) sCenter = genCenter / cnt;
+
+				for (auto& gas : base.Geysers())
 				{
-					genCenter += gas->TopLeft();
+					sCenter = (sCenter + gas->Pos()) / 2;
+					genCenter += gas->Pos();
 					cnt++;
-					gasCenter = gas->Pos();
 				}
 
-				if (gasCenter.y > base.Center().y) v = true;
 				if (cnt > 0) genCenter = genCenter / cnt;
+
+				if (base.Center().x < sCenter.x) h = true;
+				if (base.Center().y < sCenter.y) v = true;
 
 				TilePosition here = base.Location();
 				set<Unit> minerals, geysers;
@@ -42,6 +51,9 @@ namespace BWEB
 				stations.push_back(newStation);
 			}
 		}
+
+		double dur = std::chrono::duration <double, std::milli>(std::chrono::high_resolution_clock::now() - start).count();
+		Broodwar << "Station time: " << dur << endl;
 	}
 
 	set<TilePosition>& Map::stationDefenses(TilePosition here, bool mirrorHorizontal, bool mirrorVertical)
@@ -55,25 +67,29 @@ namespace BWEB
 		else
 		{
 			if (mirrorHorizontal) returnValues.insert({ here + TilePosition(4, -2), here + TilePosition(0, -2), here + TilePosition(4, 1) });
-			else returnValues.insert({ here + TilePosition(-2, -2), here + TilePosition(2, -2), here + TilePosition(-2, 1) });
+			else returnValues.insert({ here + TilePosition(-2, -2), here + TilePosition(2, -2), here + TilePosition(-2, 1) });			
 		}
+
+		// Temporary fix for CC Addons
+		if (Broodwar->self()->getRace() == Races::Terran)
+			returnValues.insert(here + TilePosition(4, 1));
 		return returnValues;
 	}
 
-	const Station& Map::getClosestStation(TilePosition here) const
+	const Station* Map::getClosestStation(TilePosition here) const
 	{
 		double distBest = DBL_MAX;
-		auto bestStation = stations.end();
-		for (auto station = stations.begin(); station != stations.end(); ++station)
+		const Station* bestStation = nullptr;
+		for (auto& station : stations)
 		{
-			double dist = here.getDistance(station->BWEMBase()->Location());
+			double dist = here.getDistance(station.BWEMBase()->Location());
 
 			if (dist < distBest)
 			{
 				distBest = dist;
-				bestStation = station;
+				bestStation = &station;
 			}
 		}
-		return *bestStation;
+		return bestStation;
 	}
 }
