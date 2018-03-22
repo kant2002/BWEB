@@ -15,10 +15,7 @@ namespace BWEB
 	void Map::createWall(vector<UnitType>& buildings, const BWEM::Area * area, const BWEM::ChokePoint * choke, UnitType tight, const vector<UnitType>& defenses)
 	{
 		if (!area || !choke || buildings.empty())
-		{
-			Broodwar << "this" << endl;
 			return;
-		}
 
 		Wall newWall(area, choke);
 		double distBest = DBL_MAX;
@@ -61,9 +58,7 @@ namespace BWEB
 		// Sort functionality for Pylons by Hannes
 		//std::sort(buildings.begin(), buildings.end(), [](UnitType l, UnitType r){ return (l == BWAPI::UnitTypes::Protoss_Pylon) < (r == BWAPI::UnitTypes::Protoss_Pylon); }); // Moves pylons to end
 		//std::sort(buildings.begin(), find(buildings.begin(), buildings.end(), BWAPI::UnitTypes::Protoss_Pylon)); // Sorts everything before pylons
-
-		Broodwar << buildings.begin()->c_str() << endl;
-
+		
 		sort(buildings.begin(), buildings.end());
 		do {
 			currentWall.clear();
@@ -169,8 +164,6 @@ namespace BWEB
 		}
 		else
 		{
-			Broodwar << "yes" << endl;
-
 			// Try to find a hole in the wall
 			findCurrentHole(startTile, endTile, choke);
 			double dist = 0.0;
